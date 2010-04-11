@@ -1,0 +1,8 @@
+A Java library for producing nice looking chart in SVG.
+
+The chart types planned are:
+
+SectorChart
+BarChart
+LineChart
+ScatterChart
