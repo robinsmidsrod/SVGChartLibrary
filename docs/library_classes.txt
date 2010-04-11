@@ -1,0 +1,89 @@
+Chart (interface)
+-------
+public int getDimensionCount()
+public Range[] getRanges()
+public Range getRange(int dimension)
+public List<Item> getItemList()
+public String getType()
+public String getTitle()
+public String getDescription()
+public SVGRenderer getSVGRenderer()
+
+AbstractChart (abstract base class)
+------
+public abstract int getDimensionCount()
+public Range[] getRanges()
+public Range getRange(int dimension)
+
+public List<Item> getItemList()
+
+public abstract String getType()
+public String getTitle()
+public String getDescription()
+
+public abstract SVGRenderer getSVGRenderer()
+
+SVGRenderer (interface)
+------------
+public void renderSVG(OutputStream)
+public String getSVG()
+public void storeSVG(File)
+
+AbstractSVGRenderer
+--------------------
+public abstract void renderSVG(OutputStream)
+public String getSVG()
+public void storeSVG(File)
+
+Item
+------
+public String getName()
+public Color getColor()
+public void setColor(Color)
+public boolean isHighlighted()
+public void setHighlighted(boolean)
+public List<Value> getValueList()
+
+Value
+-------
+public double getValue(Range range)
+public double getValue(int dimension)
+public setValue(Range range, double value)
+public setValue(int dimension, double value)
+
+Range
+-------
+public double getMin()
+public void setMin(double)
+public double getMax()
+public void setMax(double)
+public String getUnit()
+public void setUnit(String)
+public String getName()
+public void setName(String)
+public boolean hasGridlines()
+public double getGridlineDistance()
+public void setGridlineDistance(double)
+public int getGridlineCount()
+public setGridlineCount(int)
+
+SectorChart
+------------
+getDimensionCount() = 1
+getType() = 'sector'
+
+BarChart
+---------
+getDimensionCount() = 1
+getType() = 'bar'
+
+LineChart
+---------------
+getDimensionCount() = 2
+getType() = 'line'
+
+ScatterChart
+--------------
+getDimensionCount() = 3
+getType() = 'scatter'
+
