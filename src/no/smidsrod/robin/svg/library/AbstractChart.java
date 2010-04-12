@@ -48,7 +48,7 @@ public abstract class AbstractChart implements Chart {
 		int dimensionCount = getDimensionCount();
 		ranges = new Range[dimensionCount];
 		for (int i = 0; i < dimensionCount; i++) {
-			ranges[i] = new Range();
+			ranges[i] = new Range(i, getItemList());
 		}
 	}
 
