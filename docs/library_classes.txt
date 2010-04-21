@@ -40,6 +40,7 @@ public void storeSVG(File)
 Item
 ------
 public String getName()
+public void setName(String name)
 public Color getColor()
 public void setColor(Color)
 public boolean isHighlighted()
@@ -48,13 +49,16 @@ public List<Value> getValueList()
 
 Value
 -------
-public double getValue(Range range)
-public double getValue(int dimension)
-public setValue(Range range, double value)
-public setValue(int dimension, double value)
+public Value(int dimensionCount)
+public Value(Chart chart)
+public double get(Range range)
+public double get(int dimension)
+public set(Range range, double value)
+public set(int dimension, double value)
 
 Range
 -------
+public int getDimension()
 public double getMin()
 public void setMin(double)
 public double getMax()
@@ -88,4 +92,3 @@ ScatterChart
 --------------
 getDimensionCount() = 3
 getType() = 'scatter'
-

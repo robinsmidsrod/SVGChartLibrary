@@ -113,37 +113,39 @@
     ><g font-size="14" transform="translate(1010,160)" fill="white" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" color-interpolation="linearRGB" stroke="white"
     ><polygon points=" 30 30 36 42 24 42" stroke="none"
       /><polygon fill="none" points=" 30 30 36 42 24 42" stroke="black"
-      /><rect x="0" y="0" transform="translate(-720,-40)" width="229" height="259" opacity="0" stroke="none"
-      /><rect x="0" y="0" transform="translate(-720,-40)" fill="none" width="229" height="259" stroke="black"
+      /><rect x="0" y="0" transform="translate(-720,-40)" width="229" height="269" opacity="0" stroke="none"
+      /><rect x="0" y="0" transform="translate(-720,-40)" fill="none" width="229" height="269" stroke="black"
       /><text fill="black" x="96" xml:space="preserve" y="17" transform="translate(-720,-40)" stroke="none"
       >Range</text
       ><line transform="translate(-720,-40)" fill="none" x1="0" x2="229" y1="20" y2="20" stroke="black"
       /><line transform="translate(-720,-40)" fill="none" x1="0" x2="229" y1="23" y2="23" stroke="black"
       /><text fill="black" x="7" xml:space="preserve" y="40" transform="translate(-720,-40)" stroke="none"
-      >+getMin(): double</text
+      >+getDimension(): int</text
       ><text fill="black" x="7" xml:space="preserve" y="57" transform="translate(-720,-40)" stroke="none"
-      >+setMin(double): void</text
+      >+getMin(): double</text
       ><text fill="black" x="7" xml:space="preserve" y="74" transform="translate(-720,-40)" stroke="none"
-      >+getMax(): double</text
+      >+setMin(double): void</text
       ><text fill="black" x="7" xml:space="preserve" y="91" transform="translate(-720,-40)" stroke="none"
-      >+setMax(double): void</text
+      >+getMax(): double</text
       ><text fill="black" x="7" xml:space="preserve" y="108" transform="translate(-720,-40)" stroke="none"
-      >+getUnit(): String</text
+      >+setMax(double): void</text
       ><text fill="black" x="7" xml:space="preserve" y="125" transform="translate(-720,-40)" stroke="none"
-      >+setUnit(): String</text
+      >+getUnit(): String</text
       ><text fill="black" x="7" xml:space="preserve" y="142" transform="translate(-720,-40)" stroke="none"
-      >+getName(): String</text
+      >+setUnit(): String</text
       ><text fill="black" x="7" xml:space="preserve" y="159" transform="translate(-720,-40)" stroke="none"
-      >+setName(): String</text
+      >+getName(): String</text
       ><text fill="black" x="7" xml:space="preserve" y="176" transform="translate(-720,-40)" stroke="none"
-      >+hasGridlines(): boolean</text
+      >+setName(): String</text
       ><text fill="black" x="7" xml:space="preserve" y="193" transform="translate(-720,-40)" stroke="none"
-      >+getGridlineDistance(): double</text
+      >+hasGridlines(): boolean</text
       ><text fill="black" x="7" xml:space="preserve" y="210" transform="translate(-720,-40)" stroke="none"
-      >+setGridlineDistance(double): void</text
+      >+getGridlineDistance(): double</text
       ><text fill="black" x="7" xml:space="preserve" y="227" transform="translate(-720,-40)" stroke="none"
-      >+getGridlineCount(): int</text
+      >+setGridlineDistance(double): void</text
       ><text fill="black" x="7" xml:space="preserve" y="244" transform="translate(-720,-40)" stroke="none"
+      >+getGridlineCount(): int</text
+      ><text fill="black" x="7" xml:space="preserve" y="261" transform="translate(-720,-40)" stroke="none"
       >+setGridlineCount(int): void</text
     ></g
     ><g font-size="14" stroke-linecap="butt" transform="translate(490,190)" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" stroke-dasharray="8,5" color-interpolation="linearRGB" stroke-miterlimit="5"
@@ -153,8 +155,8 @@
       /><line stroke-linecap="square" fill="none" x1="30" x2="42" y1="30" y2="36" stroke-dasharray="none" stroke-miterlimit="10"
     /></g
     ><g font-size="14" transform="translate(60,90)" fill="white" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" color-interpolation="linearRGB" stroke="white"
-    ><rect x="0" width="199" height="129" y="0" opacity="0" stroke="none"
-      /><rect fill="none" x="0" width="199" height="129" y="0" stroke="black"
+    ><rect x="0" width="199" height="149" y="0" opacity="0" stroke="none"
+      /><rect fill="none" x="0" width="199" height="149" y="0" stroke="black"
       /><text fill="black" x="88" xml:space="preserve" y="17" stroke="none"
       >Item</text
       ><line y2="20" fill="none" x1="0" x2="199" stroke="black" y1="20"
@@ -162,14 +164,16 @@
       /><text fill="black" x="7" xml:space="preserve" y="40" stroke="none"
       >+getName(): String</text
       ><text fill="black" x="7" xml:space="preserve" y="57" stroke="none"
-      >+getColor(): Color</text
+      >+setName(name: String): void</text
       ><text fill="black" x="7" xml:space="preserve" y="74" stroke="none"
-      >+setColor(Color): void</text
+      >+getColor(): Color</text
       ><text fill="black" x="7" xml:space="preserve" y="91" stroke="none"
-      >+isHighlighted(): boolean</text
+      >+setColor(Color): void</text
       ><text fill="black" x="7" xml:space="preserve" y="108" stroke="none"
-      >+setHighlighted(boolean): void</text
+      >+isHighlighted(): boolean</text
       ><text fill="black" x="7" xml:space="preserve" y="125" stroke="none"
+      >+setHighlighted(boolean): void</text
+      ><text fill="black" x="7" xml:space="preserve" y="142" stroke="none"
       >+getValueList(): List&lt;Value&gt;</text
     ></g
     ><g font-size="14" stroke-linecap="butt" transform="translate(230,70)" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" stroke-dasharray="8,5" color-interpolation="linearRGB" stroke-miterlimit="5"
@@ -179,26 +183,30 @@
       /><line stroke-linecap="square" fill="none" x1="30" x2="42" y1="30" y2="36" stroke-dasharray="none" stroke-miterlimit="10"
     /></g
     ><g font-size="14" transform="translate(60,420)" fill="white" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" color-interpolation="linearRGB" stroke="white"
-    ><rect x="0" width="299" height="99" y="0" opacity="0" stroke="none"
-      /><rect fill="none" x="0" width="299" height="99" y="0" stroke="black"
-      /><text fill="black" x="133" xml:space="preserve" y="17" stroke="none"
+    ><rect x="0" width="259" height="129" y="0" opacity="0" stroke="none"
+      /><rect fill="none" x="0" width="259" height="129" y="0" stroke="black"
+      /><text fill="black" x="113" xml:space="preserve" y="17" stroke="none"
       >Value</text
-      ><line y2="20" fill="none" x1="0" x2="299" stroke="black" y1="20"
-      /><line y2="23" fill="none" x1="0" x2="299" stroke="black" y1="23"
+      ><line y2="20" fill="none" x1="0" x2="259" stroke="black" y1="20"
+      /><line y2="23" fill="none" x1="0" x2="259" stroke="black" y1="23"
       /><text fill="black" x="7" xml:space="preserve" y="40" stroke="none"
-      >+getValue(Range): double</text
+      >+Value(dimensionCount: int)</text
       ><text fill="black" x="7" xml:space="preserve" y="57" stroke="none"
-      >+getValue(dimension: int): double</text
+      >+set(dimension: int, value: double): void</text
       ><text fill="black" x="7" xml:space="preserve" y="74" stroke="none"
-      >+setValue(Range, double): void</text
+      >+get(dimension: int): double</text
       ><text fill="black" x="7" xml:space="preserve" y="91" stroke="none"
-      >+setValue(dimension: int, value: double): void</text
+      >+Value(c: Chart)</text
+      ><text fill="black" x="7" xml:space="preserve" y="108" stroke="none"
+      >+set(Range, double): void</text
+      ><text fill="black" x="7" xml:space="preserve" y="125" stroke="none"
+      >+get(Range): double</text
     ></g
-    ><g font-size="14" stroke-linecap="butt" transform="translate(130,190)" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" stroke-dasharray="8,5" color-interpolation="linearRGB" stroke-miterlimit="5"
-    ><line y2="130" fill="none" x1="30" x2="30" y1="230"
-      /><line y2="30" fill="none" x1="30" x2="30" y1="130"
-      /><line stroke-linecap="square" fill="none" x1="30" x2="24" y1="229" y2="217" stroke-dasharray="none" stroke-miterlimit="10"
-      /><line stroke-linecap="square" fill="none" x1="30" x2="36" y1="229" y2="217" stroke-dasharray="none" stroke-miterlimit="10"
+    ><g font-size="14" stroke-linecap="butt" transform="translate(130,210)" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" stroke-dasharray="8,5" color-interpolation="linearRGB" stroke-miterlimit="5"
+    ><line y2="120" fill="none" x1="30" x2="30" y1="210"
+      /><line y2="30" fill="none" x1="30" x2="30" y1="120"
+      /><line stroke-linecap="square" fill="none" x1="30" x2="24" y1="209" y2="197" stroke-dasharray="none" stroke-miterlimit="10"
+      /><line stroke-linecap="square" fill="none" x1="30" x2="36" y1="209" y2="197" stroke-dasharray="none" stroke-miterlimit="10"
     /></g
     ><g font-size="14" transform="translate(960,680)" fill="white" text-rendering="geometricPrecision" color-rendering="optimizeQuality" image-rendering="optimizeSpeed" font-family="sans-serif" color-interpolation="linearRGB" stroke="white"
     ><rect x="0" width="239" height="99" y="0" opacity="0" stroke="none"

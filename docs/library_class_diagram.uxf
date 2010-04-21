@@ -64,9 +64,10 @@ AbstractSVGRenderer
 /+renderSVG(OutputStream): void/
 +getSVG(): String
 +storeSVG(File): void
-</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>1010</x><y>160</y><w>50</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>30;30;30;190</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>290</x><y>120</y><w>230</w><h>260</h></coordinates><panel_attributes>Range
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>1010</x><y>160</y><w>50</w><h>210</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>30;30;30;190</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>290</x><y>120</y><w>230</w><h>270</h></coordinates><panel_attributes>Range
 --
 --
++getDimension(): int
 +getMin(): double
 +setMin(double): void
 +getMax(): double
@@ -80,22 +81,26 @@ AbstractSVGRenderer
 +setGridlineDistance(double): void
 +getGridlineCount(): int
 +setGridlineCount(int): void
-</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>490</x><y>190</y><w>100</w><h>50</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>30;30;80;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>60</x><y>90</y><w>200</w><h>130</h></coordinates><panel_attributes>Item
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>490</x><y>190</y><w>100</w><h>50</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>30;30;80;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>60</x><y>90</y><w>200</w><h>150</h></coordinates><panel_attributes>Item
 --
 --
 +getName(): String
++setName(name: String): void
 +getColor(): Color
 +setColor(Color): void
 +isHighlighted(): boolean
 +setHighlighted(boolean): void
 +getValueList(): List&lt;Value&gt;
-</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>230</x><y>70</y><w>360</w><h>50</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>30;30;340;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>60</x><y>420</y><w>300</w><h>100</h></coordinates><panel_attributes>Value
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>230</x><y>70</y><w>360</w><h>50</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>30;30;340;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>60</x><y>420</y><w>260</w><h>130</h></coordinates><panel_attributes>Value
 --
 --
-+getValue(Range): double
-+getValue(dimension: int): double
-+setValue(Range, double): void
-+setValue(dimension: int, value: double): void</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>130</x><y>190</y><w>50</w><h>250</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>30;230;30;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>960</x><y>680</y><w>240</w><h>100</h></coordinates><panel_attributes>ScatterChart
++Value(dimensionCount: int)
++set(dimension: int, value: double): void
++get(dimension: int): double
++Value(c: Chart)
++set(Range, double): void
++get(Range): double
+</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>130</x><y>210</y><w>50</w><h>230</h></coordinates><panel_attributes>lt=&lt;.</panel_attributes><additional_attributes>30;210;30;30</additional_attributes></element><element><type>com.umlet.element.base.Class</type><coordinates><x>960</x><y>680</y><w>240</w><h>100</h></coordinates><panel_attributes>ScatterChart
 --
 --
 +getDimensionCount(): int
