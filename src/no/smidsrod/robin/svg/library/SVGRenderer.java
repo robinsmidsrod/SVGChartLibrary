@@ -31,4 +31,11 @@ public interface SVGRenderer {
 	 *             FileOutputStream constructor for more info).
 	 */
 	public void storeSVG(File file) throws FileNotFoundException;
+
+	/**
+	 * @param b
+	 *            Output XML that is more human-readable if this is true.
+	 *            Default should be false.
+	 */
+	public void setPrettyPrint(boolean b);
 }
