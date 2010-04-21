@@ -37,6 +37,14 @@ public class Range {
 	}
 
 	/**
+	 * @return Returns the dimension this Range represents. The first dimension
+	 *         is 0 (not 1) if automatically initialized from AbstractChart.
+	 */
+	public int getDimension() {
+		return dimension;
+	}
+
+	/**
 	 * @param min
 	 *            Set the axis minimum value to the specified value.
 	 * 
@@ -193,8 +201,8 @@ public class Range {
 	}
 
 	/**
-	 * @return The difference between the maximum and minimum value as an absolute
-	 *         value.
+	 * @return The difference between the maximum and minimum value as an
+	 *         absolute value.
 	 */
 	private double calcRange() {
 		double max = getMax();
