@@ -30,11 +30,42 @@ public abstract class AbstractChart implements Chart {
 	private List<Item> itemList = new ArrayList<Item>();
 
 	/**
-	 * Instance initializer that should happen regardless of constructor used in
-	 * subclass.
+	 * Base constructor used by sub-classes.
 	 */
-	{
+	protected AbstractChart() {
 		initRanges();
+	}
+
+	/**
+	 * Convenience constructure stub for sub-classes.
+	 *
+	 * @param title
+	 *            The title of the chart
+	 * @param description
+	 *            The description of the chart
+	 */
+	protected AbstractChart(String title, String description) {
+		initRanges();
+		setTitle(title);
+		setDescription(description);
+	}
+
+	/**
+	 * Constructor that enables setting the item list from a sub-class.
+	 *
+	 * @param title
+	 *            The title of the chart
+	 * @param description
+	 *            The description of the chart
+	 * @param itemList
+	 *            The items in the chart
+	 */
+	protected AbstractChart(String title, String description,
+			List<Item> itemList) {
+		initRanges();
+		setTitle(title);
+		setDescription(description);
+		this.itemList = itemList;
 	}
 
 	@Override
