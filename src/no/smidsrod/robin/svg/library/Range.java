@@ -96,7 +96,7 @@ public class Range {
 		double savedMin = 0;
 		for (Item i : itemList) {
 			for (Value v : i.getValueList()) {
-				double currentMin = v.getValue(dimension);
+				double currentMin = v.get(dimension);
 				if (currentMin < savedMin) {
 					savedMin = currentMin;
 				}
@@ -113,7 +113,7 @@ public class Range {
 		double savedMax = 0;
 		for (Item i : itemList) {
 			for (Value v : i.getValueList()) {
-				double currentMax = v.getValue(dimension);
+				double currentMax = v.get(dimension);
 				if (currentMax > savedMax) {
 					savedMax = currentMax;
 				}
