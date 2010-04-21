@@ -10,13 +10,24 @@ import java.util.List;
  */
 public class Item {
 
+	public static final Color DEFAULT_COLOR = new Color(0, true); // Completely
+																	// transparent
+
 	private String name = "";
 
-	private Color color = new Color(0, true); // Completely transparent
+	private Color color = DEFAULT_COLOR;
 
 	private boolean highlighted = false;
 
 	private List<Value> valueList = new ArrayList<Value>();
+
+	/**
+	 * @param name
+	 *            Create an instance of Item with the given name.
+	 */
+	public Item(String name) {
+		setName(name);
+	}
 
 	/**
 	 * @return The name of this Item - default is the empty string
@@ -47,7 +58,7 @@ public class Item {
 	 *            value, the Item will become completely transparent.
 	 */
 	public void setColor(Color color) {
-		this.color = (color == null) ? new Color(0, true) : color;
+		this.color = (color == null) ? DEFAULT_COLOR : color;
 	}
 
 	/**
