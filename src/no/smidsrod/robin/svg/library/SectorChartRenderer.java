@@ -2,34 +2,36 @@ package no.smidsrod.robin.svg.library;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class SectorChartRenderer extends AbstractSVGRenderer {
 
 	// Traditional 4:3 aspect (landscape)
-	private static final int VIEWBOX_WIDTH = 1000;
-	private static final int VIEWBOX_HEIGHT = 750;
+	private static final int CANVAS_WIDTH = 1000;
+	private static final int CANVAS_HEIGHT = 750;
+	private static final int CANVAS_MARGIN = 35;
 
-	private static final int HEADER_POSITION = 50;
 	private static final int HEADER_FONT_SIZE = 32;
-	private static final int HEADER_GUTTER = 24;
-
+	private static final int FOOTER_FONT_SIZE = 18;
 	private static final int LEGEND_FONT_SIZE = 24;
 
-	private static final int SECTOR_MARGIN = 75;
+	private static final double HIGHLIGHTED_SECTOR_OFFSET_FACTOR = 0.25;
 
-	private static final String SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-	private static final String SVG_VERSION = "1.1";
+	private static final int SECTOR_MARGIN = 100;
+	private static final int SECTOR_LABEL_FONT_SIZE = 24;
+	private static final double SMALL_SECTOR_THRESHOLD = 0.04;
+
+	private static final double LARGE_SECTOR_OFFSET_FACTOR = 0.8;
+	private static final double HIGHLIGHTED_LARGE_SECTOR_OFFSET_FACTOR = 0.85;
+
+	private static final double SMALL_SECTOR_OFFSET_FACTOR = 1.2;
+	private static final double HIGHLIGHTED_SMALL_SECTOR_OFFSET_FACTOR = 1.15;
 
 	private Chart chart;
-	private Document xmlDocument;
-	private boolean prettyPrint = false;
 
 	public SectorChartRenderer(Chart chart) {
 		if (chart == null) {
@@ -43,24 +45,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		this.chart = chart;
 	}
 
-	@Override
-	public void renderSVG(OutputStream outputStream) {
-		if (xmlDocument == null) {
-			generateXML();
-		}
-		XMLSerializer serializer = new XMLSerializer(outputStream);
-		serializer.setPrettyPrint(prettyPrint);
-		serializer.write(xmlDocument);
-	}
-
-	public void setPrettyPrint(boolean prettyPrint) {
-		this.prettyPrint = prettyPrint;
-	}
-
-	private void generateXML() {
-		// Create new DOM object
-		xmlDocument = DOMBuilder.newDocument();
-
+	protected void buildSVGDocument() {
 		// Create SVG root element
 		createSVGElement();
 
@@ -77,7 +62,9 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		calcItemColors();
 
 		// Create legend
-		createLegend();
+		createItemLegend();
+		createUnitLegend();
+		createTotalLegend();
 
 		// create one sector for each item
 		createSectors();
@@ -91,13 +78,11 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 	 * http://www.w3.org/TR/SVG/coords.html#PreserveAspectRatioAttribute
 	 */
 	private void createSVGElement() {
-		Element svg = (Element) xmlDocument.createElementNS(SVG_NAMESPACE,
-				"svg");
-		xmlDocument.appendChild(svg);
+		Element svg = getXMLDocument().createElementNS(SVG_NAMESPACE, "svg");
 		svg.setAttribute("version", SVG_VERSION);
 
 		// Specify virtual canvas size
-		String viewBox = "0 0 " + VIEWBOX_WIDTH + " " + VIEWBOX_HEIGHT;
+		String viewBox = "0 0 " + CANVAS_WIDTH + " " + CANVAS_HEIGHT;
 		svg.setAttribute("viewBox", viewBox);
 
 		// Center viewbox in the middle of viewport
@@ -105,31 +90,34 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 		// Put viewbox in the top/left part of viewport
 		svg.setAttribute("preserveAspectRatio", "xMinYMin");
+
+		getXMLDocument().appendChild(svg);
+
 	}
 
 	private void createHeader() {
-		Element svg = xmlDocument.getDocumentElement();
+		Element svg = getXMLDocument().getDocumentElement();
 
 		// Set the SVG title
-		Element title = xmlDocument.createElement("title");
+		Element title = getXMLDocument().createElement("title");
 		title.setTextContent(chart.getTitle());
 		svg.appendChild(title);
 
 		// Make the description a tooltip on the background
-		Element desc = xmlDocument.createElement("desc");
+		Element desc = getXMLDocument().createElement("desc");
 		desc.setTextContent(chart.getDescription());
 		svg.appendChild(desc);
 	}
 
 	private void createViewBoxBorder() {
-		Element svg = xmlDocument.getDocumentElement();
+		Element svg = getXMLDocument().getDocumentElement();
 
-		Element border = xmlDocument.createElement("rect");
+		Element border = getXMLDocument().createElement("rect");
 		border.setAttribute("x", "1");
 		border.setAttribute("y", "1");
-		int width = VIEWBOX_WIDTH - 1;
+		int width = CANVAS_WIDTH - 1;
 		border.setAttribute("width", width + "");
-		int height = VIEWBOX_HEIGHT - 1;
+		int height = CANVAS_HEIGHT - 1;
 		border.setAttribute("height", height + "");
 		border.setAttribute("stroke", "black");
 		border.setAttribute("stroke-width", "1");
@@ -138,18 +126,229 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 	}
 
 	private void createTitleElement() {
-		Element svg = xmlDocument.getDocumentElement();
+		Element svg = getXMLDocument().getDocumentElement();
 
 		// Create a text element for the title
-		Element text = xmlDocument.createElement("text");
+		Element text = getXMLDocument().createElement("text");
 		text.setAttribute("x", "50%");
-		text.setAttribute("y", HEADER_POSITION + "");
+		text.setAttribute("y", CANVAS_MARGIN + "");
 		text.setAttribute("font-family", "sans-serif");
 		text.setAttribute("font-size", HEADER_FONT_SIZE + "");
 		text.setAttribute("text-anchor", "middle");
 		text.setTextContent(chart.getTitle());
 		svg.appendChild(text);
 
+	}
+
+	private void createItemLegend() {
+		Element svg = getXMLDocument().getDocumentElement();
+
+		double x = 0;
+		double y = 0;
+		double width = calcLegendWidth();
+		double height = calcLegendHeight();
+
+		double offsetRight = CANVAS_WIDTH - width - CANVAS_MARGIN;
+
+		// Wrap legend box in a container so we can offset it easier
+		Element g = getXMLDocument().createElement("g");
+		g.setAttribute("transform", "translate(" + offsetRight + " 75)");
+		svg.appendChild(g);
+
+		Element box = getXMLDocument().createElement("rect");
+		box.setAttribute("x", x + "");
+		box.setAttribute("y", y + "");
+		box.setAttribute("width", width + "");
+		box.setAttribute("height", height + "");
+		box.setAttribute("stroke", "black");
+		box.setAttribute("stroke-width", "1");
+		box.setAttribute("fill", "none");
+		g.appendChild(box);
+
+		List<Item> items = chart.getItemList();
+		int counter = 0;
+		for (Item item : items) {
+			drawLegendItem(counter, item, g);
+			counter++;
+		}
+
+	}
+
+	private void createUnitLegend() {
+
+		String unitText = chart.getRange(0).getUnit();
+		if (unitText.isEmpty()) {
+			return;
+		}
+
+		Element svg = getXMLDocument().getDocumentElement();
+
+		// bottom/right
+		int labelX = CANVAS_WIDTH - CANVAS_MARGIN;
+		int labelY = CANVAS_HEIGHT - CANVAS_MARGIN;
+
+		Element unitLegend = getXMLDocument().createElement("text");
+		unitLegend.setAttribute("x", labelX + "");
+		unitLegend.setAttribute("y", labelY + "");
+		unitLegend.setAttribute("text-anchor", "end");
+		unitLegend.setAttribute("font-family", "sans-serif");
+		unitLegend.setAttribute("font-size", FOOTER_FONT_SIZE + "");
+		unitLegend.setAttribute("stroke", "black");
+		unitLegend.setTextContent("Unit: " + unitText);
+
+		svg.appendChild(unitLegend);
+
+	}
+
+	private void createTotalLegend() {
+		Element svg = getXMLDocument().getDocumentElement();
+
+		// bottom/left (two lines of text)
+		int labelX = CANVAS_MARGIN;
+		int labelY = CANVAS_HEIGHT - CANVAS_MARGIN - FOOTER_FONT_SIZE;
+
+		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
+		nf.setMaximumFractionDigits(2);
+
+		double sumValues = calcSumValues(chart.getItemList());
+
+		Element totalSum = getXMLDocument().createElement("text");
+		totalSum.setAttribute("x", labelX + "");
+		totalSum.setAttribute("y", labelY + "");
+		totalSum.setAttribute("font-family", "sans-serif");
+		totalSum.setAttribute("font-size", FOOTER_FONT_SIZE + "");
+		totalSum.setAttribute("stroke", "black");
+		totalSum.setTextContent("Total sum: " + nf.format(sumValues));
+
+		svg.appendChild(totalSum);
+
+		Element totalCount = getXMLDocument().createElement("text");
+		totalCount.setAttribute("x", labelX + "");
+		totalCount.setAttribute("y", labelY + FOOTER_FONT_SIZE + "");
+		totalCount.setAttribute("font-family", "sans-serif");
+		totalCount.setAttribute("font-size", FOOTER_FONT_SIZE + "");
+		totalCount.setAttribute("stroke", "black");
+		totalCount.setTextContent("Total items: " + chart.getItemList().size());
+
+		svg.appendChild(totalCount);
+
+	}
+
+	private void createSectors() {
+		Element svg = getXMLDocument().getDocumentElement();
+
+		Element g = getXMLDocument().createElement("g");
+		svg.appendChild(g);
+
+		Point center = calcChartCenter();
+		double radius = calcSectorRadius();
+
+		List<Item> items = chart.getItemList();
+		double sumValues = calcSumValues(items);
+		double startValue = 0;
+		for (Item item : items) {
+			double currentValue = getValueForItem(item);
+			double startPosition = calcPosition(startValue, sumValues);
+			double endPosition = calcPosition(startValue + currentValue,
+					sumValues);
+			drawSectorItem(center, radius, startPosition, endPosition, item, g);
+			startValue += currentValue;
+		}
+	}
+
+	private void drawLegendItem(int counter, Item item, Element g) {
+		double y = (counter + 1) * LEGEND_FONT_SIZE + (LEGEND_FONT_SIZE / 3);
+
+		Element circle = getXMLDocument().createElement("circle");
+		circle.setAttribute("cx", "15");
+		circle.setAttribute("cy", (y - 9) + "");
+		circle.setAttribute("r", (LEGEND_FONT_SIZE * 0.4) + "");
+		circle.setAttribute("fill", cssColor(item.getColor()));
+		g.appendChild(circle);
+
+		Element text = getXMLDocument().createElement("text");
+		text.setAttribute("x", (LEGEND_FONT_SIZE * 1.25) + "");
+		text.setAttribute("y", y + "");
+		text.setAttribute("font-family", "sans-serif");
+		text.setAttribute("font-size", LEGEND_FONT_SIZE + "");
+		text.setAttribute("stroke", "black");
+		text.setTextContent(item.getName());
+		g.appendChild(text);
+	}
+
+	private void drawSectorItem(Point center, double radius, double start,
+			double end, Item item, Element g) {
+
+		String percentage = formatPercentage(start, end) + "%";
+
+		String pathData = calcPathData(center, start, end, radius, item
+				.isHighlighted());
+
+		Element path = getXMLDocument().createElement("path");
+		path.setAttribute("d", pathData);
+		path.setAttribute("fill", cssColor(item.getColor()));
+		path.setAttribute("stroke", "black");
+		g.appendChild(path);
+
+		double middle = calcMiddle(start, end);
+		double labelRadius = calcLabelRadius(radius, isSmallSector(start, end),
+				item.isHighlighted());
+		int labelX = calcXFromFraction(middle, center, labelRadius);
+		int labelY = calcYFromFraction(middle, center, labelRadius);
+
+		// Slight offset for Y based on font size
+		int labelYOffset = SECTOR_LABEL_FONT_SIZE / 3;
+
+		Element label = getXMLDocument().createElement("text");
+		label.setAttribute("x", labelX + "");
+		label.setAttribute("y", labelY + labelYOffset + "");
+		label.setAttribute("text-anchor", "middle");
+		label.setAttribute("font-family", "sans-serif");
+		label.setAttribute("font-size", SECTOR_LABEL_FONT_SIZE + "");
+		label.setAttribute("stroke", "black");
+		label.setTextContent(percentage);
+
+		g.appendChild(label);
+
+	}
+
+	private String calcPathData(Point center, double start, double end,
+			double radius, boolean isHighlighted) {
+
+		int offsetX = 0;
+		int offsetY = 0;
+
+		if (isHighlighted) {
+			double middle = calcMiddle(start, end);
+			offsetX = calcXFromFraction(middle, center, radius
+					* HIGHLIGHTED_SECTOR_OFFSET_FACTOR)
+					- center.x;
+			offsetY = calcYFromFraction(middle, center, radius
+					* HIGHLIGHTED_SECTOR_OFFSET_FACTOR)
+					- center.y;
+		}
+
+		int centerX = center.x + offsetX;
+		int centerY = center.y + offsetY;
+
+		int startX = calcXFromFraction(start, center, radius) + offsetX;
+		int startY = calcYFromFraction(start, center, radius) + offsetY;
+
+		int endX = calcXFromFraction(end, center, radius) + offsetX;
+		int endY = calcYFromFraction(end, center, radius) + offsetY;
+
+		// If the sector is larger than 50%, make sure we actually get the right
+		// component of the arc, see
+		// http://www.w3.org/TR/SVG/paths.html#PathDataEllipticalArcCommands
+		String arcPart = Math.abs(start - end) > 0.5 ? " 1,1" : " 0,1";
+
+		String moveToCenter = "M" + centerX + "," + centerY;
+		String lineToStart = " L" + startX + "," + startY;
+		String arcToEnd = " A" + radius + "," + radius + " 0" + arcPart + endX
+				+ "," + endY;
+		String closePath = " Z";
+
+		return moveToCenter + lineToStart + arcToEnd + closePath;
 	}
 
 	private void calcItemColors() {
@@ -186,78 +385,9 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		return new Color(Color.HSBtoRGB(hue, 1f, 1f));
 	}
 
-	private void createLegend() {
-		Element svg = xmlDocument.getDocumentElement();
-
-		double x = 0;
-		double y = 0;
-		double width = calcLegendWidth();
-		double height = calcLegendHeight();
-
-		double offsetRight = VIEWBOX_WIDTH - width - 25;
-
-		// Wrap legend box in a container so we can offset it easier
-		Element g = xmlDocument.createElement("g");
-		g.setAttribute("transform", "translate(" + offsetRight + " 75)");
-		svg.appendChild(g);
-
-		Element box = xmlDocument.createElement("rect");
-		box.setAttribute("x", x + "");
-		box.setAttribute("y", y + "");
-		box.setAttribute("width", width + "");
-		box.setAttribute("height", height + "");
-		box.setAttribute("stroke", "black");
-		box.setAttribute("stroke-width", "1");
-		box.setAttribute("fill", "none");
-		g.appendChild(box);
-
-		List<Item> items = chart.getItemList();
-		int counter = 0;
-		for (Item item : items) {
-			drawLegendItem(counter, item, g);
-			counter++;
-		}
-
-	}
-
-	private void drawLegendItem(int counter, Item item, Element g) {
-		double y = (counter + 1) * LEGEND_FONT_SIZE + (LEGEND_FONT_SIZE / 3);
-
-		Element circle = xmlDocument.createElement("circle");
-		circle.setAttribute("cx", "15");
-		circle.setAttribute("cy", (y - 9) + "");
-		circle.setAttribute("r", (LEGEND_FONT_SIZE * 0.4) + "");
-		circle.setAttribute("fill", cssColor(item.getColor()));
-		g.appendChild(circle);
-
-		Element text = xmlDocument.createElement("text");
-		text.setAttribute("x", (LEGEND_FONT_SIZE * 1.25) + "");
-		text.setAttribute("y", y + "");
-		text.setAttribute("font-family", "sans-serif");
-		text.setAttribute("font-size", LEGEND_FONT_SIZE + "");
-		text.setAttribute("stroke", "black");
-		text.setTextContent(item.getName());
-		g.appendChild(text);
-	}
-
-	private String cssColor(Color color) {
-		return "#" + Integer.toHexString(color.getRGB());
-	}
-
-	private double calcLegendHeight() {
-		// Max 75% of height
-		double maxHeight = VIEWBOX_HEIGHT * 3 / 4;
-
-		// Use item count + 1 multiplied by font height
-		int itemCount = chart.getItemList().size();
-		double height = LEGEND_FONT_SIZE * ((double) itemCount + 1);
-
-		return height > maxHeight ? maxHeight : height;
-	}
-
 	private double calcLegendWidth() {
-		// Max 20% of width
-		double maxWidth = VIEWBOX_WIDTH / 5;
+		// Max 20% of canvas width
+		double maxWidth = CANVAS_WIDTH / 5;
 
 		// Calculate max character count for Item label
 		List<Item> items = chart.getItemList();
@@ -277,91 +407,74 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		return width > maxWidth ? maxWidth : width;
 	}
 
-	private void createSectors() {
-		Element svg = xmlDocument.getDocumentElement();
+	private double calcLegendHeight() {
+		// Max 75% of height
+		double maxHeight = CANVAS_HEIGHT * 3 / 4;
 
-		Element g = xmlDocument.createElement("g");
-		svg.appendChild(g);
+		// Use item count + 1 multiplied by font height
+		int itemCount = chart.getItemList().size();
+		double height = LEGEND_FONT_SIZE * ((double) itemCount + 1);
 
-		Point center = calcCenter();
-		double radius = calcSectorRadius();
-
-		System.err.println("Center: " + center);
-
-		List<Item> items = chart.getItemList();
-		double sumValues = calcSumValues(items);
-		double startValue = 0;
-		for (Item item : items) {
-			double currentValue = getValueForItem(item);
-			double startPosition = calcPosition(startValue, sumValues);
-			double endPosition = calcPosition(startValue + currentValue,
-					sumValues);
-			drawSectorItem(center, radius, startPosition, endPosition, item, g);
-			startValue += currentValue;
-		}
+		return height > maxHeight ? maxHeight : height;
 	}
 
-	private double calcSectorRadius() {
-		return (VIEWBOX_HEIGHT - calcHeaderHeight() - calcFooterHeight() - SECTOR_MARGIN * 2) / 2;
+	private int calcHeaderHeight() {
+		return CANVAS_MARGIN + HEADER_FONT_SIZE;
 	}
 
 	private int calcFooterHeight() {
-		// TODO Auto-generated method stub
-		return calcHeaderHeight();
+		return CANVAS_MARGIN + FOOTER_FONT_SIZE * 2;
 	}
 
-	private void drawSectorItem(Point center, double radius, double start,
-			double end, Item item, Element g) {
-		System.err.println(item.getName() + ": " + calcAngle(start) + " - "
-				+ calcAngle(end) + " (" + calcPercentage(start, end) + "%)");
-
-		String percentage = calcPercentage(start, end) + "%";
-		Element path = xmlDocument.createElement("path");
-		String pathData = calcPathData(center, start, end, radius, item
-				.isHighlighted());
-		path.setAttribute("d", pathData);
-		path.setAttribute("fill", cssColor(item.getColor()));
-		path.setAttribute("stroke", "black");
-		path.setAttribute("title", percentage);
-
-		g.appendChild(path);
-
+	/**
+	 * Calculates the center point for the sector elements, offset by header,
+	 * footer and item legend.
+	 * 
+	 * @return center-point for the sectors
+	 */
+	private Point calcChartCenter() {
+		int x = CANVAS_WIDTH / 2 - (int) (calcLegendWidth() / 2);
+		int y = ((CANVAS_HEIGHT - calcHeaderHeight() - calcFooterHeight()) / 2)
+				+ calcHeaderHeight();
+		return new Point(x, y);
 	}
 
-	private String calcPathData(Point center, double start, double end,
-			double radius, boolean isHighlighted) {
+	private double calcSectorRadius() {
+		return (CANVAS_HEIGHT - calcHeaderHeight() - calcFooterHeight() - SECTOR_MARGIN * 2) / 2;
+	}
 
-		int offsetX = 0;
-		int offsetY = 0;
+	private boolean isSmallSector(double start, double end) {
+		return Math.abs(start - end) < SMALL_SECTOR_THRESHOLD ? true : false;
+	}
 
+	private double calcLabelRadius(double radius, boolean isSmallSector,
+			boolean isHighlighted) {
+		double labelRadius = radius;
 		if (isHighlighted) {
-			double middle = (end - start) / 2 + start;
-			System.err.println("MiddleAngle:" + calcAngle(middle));
-			offsetX = calcXFromFraction(middle, center, radius * 0.5)
-					- center.x;
-			offsetY = calcYFromFraction(middle, center, radius * 0.5)
-					- center.y;
+			labelRadius = labelRadius * (1 + HIGHLIGHTED_SECTOR_OFFSET_FACTOR);
 		}
 
-		int centerX = center.x + offsetX;
-		int centerY = center.y + offsetY;
+		if (isSmallSector) {
+			if (isHighlighted) {
+				labelRadius = labelRadius
+						* HIGHLIGHTED_SMALL_SECTOR_OFFSET_FACTOR;
+			} else {
+				labelRadius = labelRadius * SMALL_SECTOR_OFFSET_FACTOR;
+			}
+		} else {
+			if (isHighlighted) {
+				labelRadius = labelRadius
+						* HIGHLIGHTED_LARGE_SECTOR_OFFSET_FACTOR;
+			} else {
+				labelRadius = labelRadius * LARGE_SECTOR_OFFSET_FACTOR;
+			}
+		}
 
-		int startX = calcXFromFraction(start, center, radius) + offsetX;
-		int startY = calcYFromFraction(start, center, radius) + offsetY;
+		return labelRadius;
+	}
 
-		int endX = calcXFromFraction(end, center, radius) + offsetX;
-		int endY = calcYFromFraction(end, center, radius) + offsetY;
-
-		int xAxisOffset = 0; // calcAngle(start);
-
-		String moveToCenter = "M" + centerX + "," + centerY;
-		String lineToStart = " L" + startX + "," + startY;
-		String arcToEnd = " A" + radius + "," + radius + " " + xAxisOffset
-				+ " 0,1 " + endX + "," + endY;
-		// String lineToEnd = " L" + endX + "," + endY;
-		String closePath = " Z";
-
-		return moveToCenter + lineToStart + arcToEnd + closePath;
+	private double calcMiddle(double start, double end) {
+		return (end - start) / 2 + start;
 	}
 
 	private int calcXFromFraction(double fraction, Point center, double radius) {
@@ -398,25 +511,23 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		return sumValues;
 	}
 
-	private Point calcCenter() {
-		int x = VIEWBOX_WIDTH / 2; // - (int) calcLegendWidth();
-		int y = VIEWBOX_HEIGHT / 2; // + calcHeaderHeight();
-		return new Point(x, y);
-	}
-
-	private int calcHeaderHeight() {
-		return HEADER_POSITION + HEADER_FONT_SIZE + HEADER_GUTTER;
-	}
-
 	private int calcAngle(double fraction) {
 		return (int) Math.round(fraction * 360);
 	}
 
-	private String calcPercentage(double start, double end) {
+	private String cssColor(Color color) {
+		return "#" + Integer.toHexString(color.getRGB());
+	}
+
+	private String formatPercentage(double start, double end) {
 		double fraction = Math.abs(start - end);
 		double percentage = fraction * 100;
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
-		nf.setMaximumFractionDigits(1);
+		if (fraction < SMALL_SECTOR_THRESHOLD) {
+			nf.setMaximumFractionDigits(1);
+		} else {
+			nf.setMaximumFractionDigits(0);
+		}
 		return nf.format(percentage);
 	}
 
