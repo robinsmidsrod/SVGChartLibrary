@@ -98,12 +98,13 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 	private void createCanvasBorder() {
 		Element svg = getXMLDocument().getDocumentElement();
 
+		int width = CANVAS_WIDTH - 2;
+		int height = CANVAS_HEIGHT - 2;
+
 		Element border = getXMLDocument().createElement("rect");
 		border.setAttribute("x", "1");
 		border.setAttribute("y", "1");
-		int width = CANVAS_WIDTH - 1;
 		border.setAttribute("width", width + "");
-		int height = CANVAS_HEIGHT - 1;
 		border.setAttribute("height", height + "");
 		border.setAttribute("stroke", "black");
 		border.setAttribute("stroke-width", "1");
