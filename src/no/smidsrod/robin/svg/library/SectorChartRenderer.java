@@ -1,6 +1,5 @@
 package no.smidsrod.robin.svg.library;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.text.NumberFormat;
 import java.util.List;
@@ -46,28 +45,15 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 	}
 
 	protected void buildSVGDocument() {
-		// Create SVG root element
-		createSVGElement();
-
-		// Title and description tags (typical SVG metadata)
-		createHeader();
-
-		// Draw viewbox border
-		createViewBoxBorder();
-
-		// Create title and description element
-		createTitleElement();
-
-		// calculate colors for each item
-		calcItemColors();
-
-		// Create legend
+		ChartUtil.finalizeChart(chart); // Do necessary chart calculations
+		createSVGElement(); // SVG root container
+		createSVGHeader(); // Title and description tags
+		createCanvasBorder();
+		createTitleElement(); // Header text
 		createItemLegend();
 		createUnitLegend();
 		createTotalLegend();
-
-		// create one sector for each item
-		createSectors();
+		createSectors(); // for all items
 	}
 
 	/**
@@ -95,7 +81,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 	}
 
-	private void createHeader() {
+	private void createSVGHeader() {
 		Element svg = getXMLDocument().getDocumentElement();
 
 		// Set the SVG title
@@ -109,7 +95,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		svg.appendChild(desc);
 	}
 
-	private void createViewBoxBorder() {
+	private void createCanvasBorder() {
 		Element svg = getXMLDocument().getDocumentElement();
 
 		Element border = getXMLDocument().createElement("rect");
@@ -263,7 +249,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		circle.setAttribute("cx", "15");
 		circle.setAttribute("cy", (y - 9) + "");
 		circle.setAttribute("r", (LEGEND_FONT_SIZE * 0.4) + "");
-		circle.setAttribute("fill", cssColor(item.getColor()));
+		circle.setAttribute("fill", SVGUtil.cssColor(item.getColor()));
 		g.appendChild(circle);
 
 		Element text = getXMLDocument().createElement("text");
@@ -286,7 +272,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 		Element path = getXMLDocument().createElement("path");
 		path.setAttribute("d", pathData);
-		path.setAttribute("fill", cssColor(item.getColor()));
+		path.setAttribute("fill", SVGUtil.cssColor(item.getColor()));
 		path.setAttribute("stroke", "black");
 		g.appendChild(path);
 
@@ -349,40 +335,6 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		String closePath = " Z";
 
 		return moveToCenter + lineToStart + arcToEnd + closePath;
-	}
-
-	private void calcItemColors() {
-		List<Item> items = chart.getItemList();
-		int numberOfItems = 0;
-		Color defaultColor = Item.DEFAULT_COLOR;
-
-		// Figure out how many items that need colors calculated
-		for (Item item : items) {
-			if (item.getColor() == defaultColor) {
-				numberOfItems++;
-			}
-		}
-
-		// Set color on the items that needs it
-		int i = 0;
-		for (Item item : items) {
-			if (item.getColor() == defaultColor) {
-				item.setColor(calcColorForItem(i, numberOfItems));
-				i++;
-			}
-		}
-
-	}
-
-	private Color calcColorForItem(int i, int numberOfItems) {
-		if (numberOfItems == 0) {
-			return Color.GRAY;
-		}
-		float interval = 1f / numberOfItems;
-		float hue = interval * (float) i;
-		// System.err.println("Interval: " + interval);
-		// System.err.println("Hue: " + hue);
-		return new Color(Color.HSBtoRGB(hue, 1f, 1f));
 	}
 
 	private double calcLegendWidth() {
@@ -515,19 +467,17 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		return (int) Math.round(fraction * 360);
 	}
 
-	private String cssColor(Color color) {
-		return "#" + Integer.toHexString(color.getRGB());
-	}
-
 	private String formatPercentage(double start, double end) {
 		double fraction = Math.abs(start - end);
 		double percentage = fraction * 100;
+
 		NumberFormat nf = NumberFormat.getNumberInstance(Locale.ENGLISH);
 		if (fraction < SMALL_SECTOR_THRESHOLD) {
 			nf.setMaximumFractionDigits(1);
 		} else {
 			nf.setMaximumFractionDigits(0);
 		}
+
 		return nf.format(percentage);
 	}
 

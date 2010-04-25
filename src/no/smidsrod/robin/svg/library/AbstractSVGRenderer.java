@@ -56,6 +56,7 @@ public abstract class AbstractSVGRenderer implements SVGRenderer {
 		return prettyPrint;
 	}
 
+	@Override
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
 	}

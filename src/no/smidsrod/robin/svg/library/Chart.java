@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * @author Robin Smidsrød <robin@smidsrod.no>
- *
+ * 
  */
 public interface Chart {
 	/**
@@ -64,4 +64,5 @@ public interface Chart {
 	 *         object.
 	 */
 	public SVGRenderer getSVGRenderer();
+
 }
