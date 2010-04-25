@@ -3,9 +3,16 @@ package no.smidsrod.robin.svg.library;
 import java.awt.Color;
 import java.util.List;
 
-public class ChartUtil {
+class ChartUtil {
 
-	public static void finalizeChart(Chart chart) {
+	/**
+	 * Do tasks that is required on a chart before the SVG document is
+	 * generated.
+	 * 
+	 * @param chart
+	 *            The chart to manipulate.
+	 */
+	static void finalizeChart(Chart chart) {
 		calcItemColors(chart);
 	}
 
@@ -26,7 +33,7 @@ public class ChartUtil {
 				numberOfItems++;
 			}
 		}
-		
+
 		// Just stop if no items needs color calculated
 		if (numberOfItems == 0) {
 			return;
