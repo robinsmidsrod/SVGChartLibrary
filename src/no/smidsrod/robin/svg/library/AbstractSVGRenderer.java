@@ -5,28 +5,83 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+import org.w3c.dom.Document;
+
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 /**
  * @author Robin Smidsrød <robin@smidsrod.no>
- *
+ * 
  */
 public abstract class AbstractSVGRenderer implements SVGRenderer {
 
-	@Override
-	abstract public void renderSVG(OutputStream outputStream);
+	private Document xmlDocument;
+
+	private boolean prettyPrint = false;
 
 	@Override
-	public String getSVG() {
+	public void renderSVGDocument(OutputStream outputStream) {
+		if (xmlDocument == null) {
+			initXMLDocument();
+			buildSVGDocument();
+		}
+		XMLSerializer serializer = new XMLSerializer(outputStream);
+		serializer.setPrettyPrint(getPrettyPrint());
+		serializer.write(getXMLDocument());
+	}
+
+	/**
+	 * Implement this method by adding elements to the XML Document returned by
+	 * getXMLDocument() to form the complete SVG document.
+	 */
+	abstract void buildSVGDocument();
+
+	@Override
+	public String getSVGDocument() {
 		ByteOutputStream out = new ByteOutputStream();
-		renderSVG(out);
+		renderSVGDocument(out);
 		return out.toString();
 	}
 
 	@Override
-	public void storeSVG(File file) throws FileNotFoundException {
+	public void storeSVGDocument(File file) throws FileNotFoundException {
 		FileOutputStream out = new FileOutputStream(file);
-		renderSVG(out);
+		renderSVGDocument(out);
+	}
+
+	/**
+	 * @return The value of the prettyPrint flag.
+	 */
+	public boolean getPrettyPrint() {
+		return prettyPrint;
+	}
+
+	public void setPrettyPrint(boolean prettyPrint) {
+		this.prettyPrint = prettyPrint;
+	}
+
+	private void initXMLDocument() {
+		xmlDocument = DOMBuilder.newDocument(); // Create new DOM object
+	}
+
+	/**
+	 * If there is no instance available, a new empty instance will be created.
+	 * 
+	 * @return A standard XML document instance
+	 */
+	public Document getXMLDocument() {
+		if (xmlDocument == null) {
+			initXMLDocument();
+		}
+		return xmlDocument;
+	}
+
+	/**
+	 * Will reset the entire XML document so that buildSVGDocument() will be
+	 * called again whenever one of the serialization methods are used.
+	 */
+	public void invalidate() {
+		xmlDocument = null;
 	}
 
 }
