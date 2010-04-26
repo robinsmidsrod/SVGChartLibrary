@@ -2,19 +2,19 @@ package no.smidsrod.robin.svg.library;
 
 import org.w3c.dom.Element;
 
-public class BarChartRenderer extends AbstractSVGRenderer implements
+public class LineChartRenderer extends AbstractSVGRenderer implements
 		SVGRenderer {
 
 	private Chart chart;
 
-	public BarChartRenderer(Chart chart) {
+	public LineChartRenderer(Chart chart) {
 		if (chart == null) {
 			throw new NullPointerException(
 					"Please specify an instance of the Chart interface");
 		}
-		if (chart.getDimensionCount() < 1) {
+		if (chart.getDimensionCount() < 2) {
 			throw new IndexOutOfBoundsException(
-					"The specified chart instance doesn't support at least 1 dimension");
+					"The specified chart instance doesn't support at least 2 dimensions");
 		}
 		this.chart = chart;
 	}
@@ -28,9 +28,9 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
 
-		// createHorizontalLine();
+		// createHorizontalAxis();
 		// createVerticalAxis();
-		// createBars();
+		// createLines();
 	}
 
 }
