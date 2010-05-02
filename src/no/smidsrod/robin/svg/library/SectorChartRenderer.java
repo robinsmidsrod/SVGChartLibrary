@@ -38,8 +38,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		Canvas.createBorderElement(svg);
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
-		DataRegion.createBorderElement(svg, chart.getItemList());
-
+		//DataRegion.createBorderElement(svg, chart.getItemList());
 		createRangeLegend(svg);
 		createTotalLegend(svg);
 		createSectorElements(svg);

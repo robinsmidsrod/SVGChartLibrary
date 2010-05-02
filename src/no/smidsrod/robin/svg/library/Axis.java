@@ -10,6 +10,7 @@ import org.w3c.dom.Element;
 class Axis {
 
 	private static final int MARKER_FONT_SIZE = 12;
+	private static final int LABEL_FONT_SIZE = 14;
 
 	/**
 	 * @param range
@@ -17,28 +18,49 @@ class Axis {
 	 * @return The calculated label.
 	 */
 	static String calcLabel(Range range) {
-
 		// Nothing specified, return empty string
 		if (range.getName().isEmpty() && range.getUnit().isEmpty()) {
 			return "";
 		}
-
 		String rangeText = "";
-
 		if (!range.getName().isEmpty()) {
 			rangeText += range.getName();
 		}
-
 		if (!range.getUnit().isEmpty()) {
 			rangeText += " (" + range.getUnit() + ")";
 		}
-
 		return rangeText;
 	}
 
-	static void createVerticalElement(Element svg, Chart chart) {
-		Range range = chart.getRange(0);
-		List<Item> items = chart.getItemList();
+	static void createHorizontalElement(Element svg, Range range,
+			List<Item> items) {
+
+		// Horizontal line
+		int lineY = DataRegion.calcBottom();
+		Point start = new Point(DataRegion.calcLeft(), lineY);
+		Point end = new Point(DataRegion.calcRight(items), lineY);
+		SVGBuilder.createLineElement(svg, start, end, "black");
+
+		// Grid markers + labels
+		int height = DataRegion.calcHeight();
+		boolean hasGridlines = range.hasGridlines();
+		int gridLineCount = hasGridlines ? range.getGridlineCount() : 3;
+		createHorizontalMarkers(svg, range, items, start, gridLineCount,
+				hasGridlines, height);
+
+		// Draw minimum value grid marker
+		createHorizontalMarkerElement(svg, start, range.getMin());
+
+		// Axis label
+		int yOffset = +LABEL_FONT_SIZE - LABEL_FONT_SIZE / 6;
+		Point labelPosition = new Point(end.x, end.y + yOffset);
+		String labelText = calcLabel(range);
+		SVGBuilder.createTextElement(svg, labelPosition, labelText,
+				LABEL_FONT_SIZE, "end");
+
+	}
+
+	static void createVerticalElement(Element svg, Range range, List<Item> items) {
 
 		// Vertical line
 		int lineX = DataRegion.calcLeft();
@@ -57,30 +79,39 @@ class Axis {
 		createVerticalMarkerElement(svg, start, range.getMin());
 
 		// Axis label
-		int labelFontSize = 14;
-		int yOffset = -labelFontSize - labelFontSize / 6;
+		int yOffset = -LABEL_FONT_SIZE - LABEL_FONT_SIZE / 6;
 		Point labelPosition = new Point(end.x, end.y + yOffset);
-		String labelText = Axis.calcLabel(range);
+		String labelText = calcLabel(range);
 		SVGBuilder.createTextElement(svg, labelPosition, labelText,
-				labelFontSize, "start");
+				LABEL_FONT_SIZE, "start");
 
 	}
 
-	static private void createVerticalMarkerElement(Element svg,
-			Point location, double value) {
-		Point lineEnd = new Point(location.x + 3, location.y);
-		Point textPosition = new Point(location.x + 7, location.y);
-		SVGBuilder.createLineElement(svg, location, lineEnd, "black");
-		SVGBuilder.createTextElement(svg, textPosition, formatValue(value),
-				MARKER_FONT_SIZE, "start");
+	static private void createHorizontalMarkers(Element svg, Range range,
+			List<Item> items, Point start, int gridLineCount,
+			boolean hasGridlines, int height) {
+		double scaleFactor = DataRegion.calcWidth(items)
+				/ range.calcTotalDistance();
+		double markerDistance = range.calcTotalDistance() / (gridLineCount + 1);
+		// Start at 1 and go to gridLineCount + 1 to draw max as well
+		for (int i = 1; i <= gridLineCount + 1; i++) {
+			double realMarkerDistance = markerDistance * i * scaleFactor;
+			Point position = new Point(start.x + (int) realMarkerDistance,
+					start.y);
+			if (hasGridlines) {
+				Point end = new Point(position.x, position.y - height);
+				SVGBuilder.createDottedLineElement(svg, position, end, "black");
+			}
+			double value = range.getMin() + markerDistance * i;
+			createHorizontalMarkerElement(svg, position, value);
+		}
 	}
 
 	static private void createVerticalMarkers(Element svg, Range range,
 			Point start, int gridLineCount, boolean hasGridlines, int width) {
-		double scaleFactor = Axis.calcScaleFactor(range);
-		double totalDistance = range.calcTotalDistance();
-		double markerDistance = totalDistance / (gridLineCount + 1);
-		double minValue = range.getMin();
+		double scaleFactor = DataRegion.calcHeight()
+				/ range.calcTotalDistance();
+		double markerDistance = range.calcTotalDistance() / (gridLineCount + 1);
 		// Start at 1 and go to gridLineCount + 1 to draw max as well
 		for (int i = 1; i <= gridLineCount + 1; i++) {
 			double realMarkerDistance = markerDistance * i * scaleFactor;
@@ -90,13 +121,27 @@ class Axis {
 				Point end = new Point(position.x + width, position.y);
 				SVGBuilder.createDottedLineElement(svg, position, end, "black");
 			}
-			double value = minValue + markerDistance * i;
+			double value = range.getMin() + markerDistance * i;
 			createVerticalMarkerElement(svg, position, value);
 		}
 	}
 
-	static private double calcScaleFactor(Range range) {
-		return DataRegion.calcHeight() / range.calcTotalDistance();
+	static private void createHorizontalMarkerElement(Element svg,
+			Point location, double value) {
+		Point lineEnd = new Point(location.x, location.y - 3);
+		Point textPosition = new Point(location.x, location.y - 7);
+		SVGBuilder.createLineElement(svg, location, lineEnd, "black");
+		SVGBuilder.createTextElement(svg, textPosition, formatValue(value),
+				MARKER_FONT_SIZE, "middle");
+	}
+
+	static private void createVerticalMarkerElement(Element svg,
+			Point location, double value) {
+		Point lineEnd = new Point(location.x + 3, location.y);
+		Point textPosition = new Point(location.x + 7, location.y);
+		SVGBuilder.createLineElement(svg, location, lineEnd, "black");
+		SVGBuilder.createTextElement(svg, textPosition, formatValue(value),
+				MARKER_FONT_SIZE, "start");
 	}
 
 	static private String formatValue(double value) {

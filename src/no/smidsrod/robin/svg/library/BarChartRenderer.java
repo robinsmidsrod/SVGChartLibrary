@@ -28,8 +28,7 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
 		// DataRegion.createBorderElement(svg, chart.getItemList());
-
-		Axis.createVerticalElement(svg, chart);
+		Axis.createVerticalElement(svg, chart.getRange(0), chart.getItemList());
 		createHorizontalLine(svg, chart.getItemList());
 		// createBars();
 	}
