@@ -9,7 +9,7 @@ class Canvas {
 	static final int HEIGHT = 750;
 
 	// Margin between the canvas border and contained elements
-	static final int MARGIN = 35;
+	static final int MARGIN = 20;
 
 	/**
 	 * Paint a border around the outer edge of the canvas.

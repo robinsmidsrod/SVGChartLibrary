@@ -23,7 +23,7 @@ class Legend {
 		double height = calcHeight(items);
 
 		double boxX = Canvas.WIDTH - Canvas.MARGIN - width;
-		double boxY = 75;
+		double boxY = DataRegion.calcTop();
 
 		// Wrap legend box in a container so we can offset it easier
 		Element g = DOMBuilder.createElement(svg, "g");
@@ -49,6 +49,11 @@ class Legend {
 	}
 
 	static private void createItemElement(Element g, Item item, int counter) {
+		// Can't fit any more items into the legend
+		boolean tooManyItems = counter  > 23 ? true : false;
+		if ( tooManyItems  ) {
+			return;
+		}
 		double y = (counter + 1) * FONT_SIZE + (FONT_SIZE / 3);
 
 		Element circle = DOMBuilder.createElement(g, "circle");
@@ -92,8 +97,9 @@ class Legend {
 	}
 
 	static private double calcHeight(List<Item> items) {
-		// Max 75% of height
-		double maxHeight = Canvas.HEIGHT * 3 / 4;
+		// Maximum height is the same as the data region
+		double maxHeight = DataRegion.calcHeight();
+
 		// Use item count + 1 multiplied by font height
 		double height = FONT_SIZE * ((double) items.size() + 1);
 

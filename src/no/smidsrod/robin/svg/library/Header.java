@@ -14,7 +14,7 @@ class Header {
 		// Create a text element for the title
 		Element text = DOMBuilder.createElement(svg, "text");
 		text.setAttribute("x", "50%");
-		text.setAttribute("y", Canvas.MARGIN + "");
+		text.setAttribute("y", ( Canvas.MARGIN + FONT_SIZE ) + "");
 		text.setAttribute("font-family", "sans-serif");
 		text.setAttribute("font-size", FONT_SIZE + "");
 		text.setAttribute("text-anchor", "middle");

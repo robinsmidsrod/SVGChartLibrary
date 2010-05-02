@@ -11,7 +11,6 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 	private static final double HIGHLIGHTED_SECTOR_OFFSET_FACTOR = 0.25;
 
-	private static final int SECTOR_MARGIN = 100;
 	private static final int SECTOR_LABEL_FONT_SIZE = 24;
 	private static final double SMALL_SECTOR_THRESHOLD = 0.04;
 
@@ -20,8 +19,6 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 	private static final double SMALL_SECTOR_OFFSET_FACTOR = 1.2;
 	private static final double HIGHLIGHTED_SMALL_SECTOR_OFFSET_FACTOR = 1.15;
-
-	private static final int FOOTER_LINE_COUNT = 2;
 
 	private Chart chart;
 
@@ -44,16 +41,18 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		Canvas.createBorderElement(svg);
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
+		DataRegion.createBorderElement(svg, chart.getItemList());
 
-		createUnitLegend(svg);
+		createRangeLegend(svg);
 		createTotalLegend(svg);
-		createSectors(svg);
+		createSectorElements(svg);
 	}
 
-	private void createUnitLegend(Element svg) {
+	private void createRangeLegend(Element svg) {
 
-		String unitText = chart.getRange(0).getUnit();
-		if (unitText.isEmpty()) {
+		String rangeText = calcRangeLabel(chart.getRange(0));
+
+		if (rangeText.isEmpty()) {
 			return;
 		}
 
@@ -68,10 +67,35 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		unitLegend.setAttribute("font-family", "sans-serif");
 		unitLegend.setAttribute("font-size", Footer.FONT_SIZE + "");
 		unitLegend.setAttribute("stroke", "black");
-		unitLegend.setTextContent("Unit: " + unitText);
+		unitLegend.setTextContent(rangeText);
 
 		svg.appendChild(unitLegend);
 
+	}
+
+	/**
+	 * @param range
+	 *            The range you want to calculate the label for.
+	 * @return The calculated label.
+	 */
+	private String calcRangeLabel(Range range) {
+
+		// Nothing specified, return empty string
+		if (range.getName().isEmpty() && range.getUnit().isEmpty()) {
+			return "";
+		}
+
+		String rangeText = (range.getDimension() + 1) + ": ";
+
+		if (!range.getName().isEmpty()) {
+			rangeText += range.getName();
+		}
+
+		if (!range.getUnit().isEmpty()) {
+			rangeText += " (" + chart.getRange(0).getUnit() + ")";
+		}
+
+		return rangeText;
 	}
 
 	private void createTotalLegend(Element svg) {
@@ -106,11 +130,11 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 	}
 
-	private void createSectors(Element svg) {
+	private void createSectorElements(Element svg) {
 		Element g = DOMBuilder.createElement(svg, "g");
 		svg.appendChild(g);
 
-		Point center = calcChartCenter();
+		Point center = DataRegion.calcCenter(chart.getItemList());
 		double radius = calcSectorRadius();
 
 		List<Item> items = chart.getItemList();
@@ -121,13 +145,14 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 			double startPosition = calcPosition(startValue, sumValues);
 			double endPosition = calcPosition(startValue + currentValue,
 					sumValues);
-			drawSectorItem(center, radius, startPosition, endPosition, item, g);
+			createSectorElement(g, center, radius, startPosition, endPosition,
+					item);
 			startValue += currentValue;
 		}
 	}
 
-	private void drawSectorItem(Point center, double radius, double start,
-			double end, Item item, Element g) {
+	private void createSectorElement(Element g, Point center, double radius,
+			double start, double end, Item item) {
 
 		String percentage = formatPercentage(start, end) + "%";
 
@@ -141,8 +166,8 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		g.appendChild(path);
 
 		double middle = calcMiddle(start, end);
-		double labelRadius = calcLabelRadius(radius, isSmallSector(start, end),
-				item.isHighlighted());
+		double labelRadius = calcSectorLabelRadius(radius, isSmallSector(start,
+				end), item.isHighlighted());
 		int labelX = calcXFromFraction(middle, center, labelRadius);
 		int labelY = calcYFromFraction(middle, center, labelRadius);
 
@@ -201,29 +226,18 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 		return moveToCenter + lineToStart + arcToEnd + closePath;
 	}
 
-	/**
-	 * Calculates the center point for the sector elements, offset by header,
-	 * footer and item legend.
-	 * 
-	 * @return center-point for the sectors
-	 */
-	private Point calcChartCenter() {
-		int x = Canvas.WIDTH / 2
-				- (int) (Legend.calcWidth(chart.getItemList()) / 2);
-		int y = ((Canvas.HEIGHT - Header.calcHeight() - Footer.calcHeight(FOOTER_LINE_COUNT)) / 2)
-				+ Header.calcHeight();
-		return new Point(x, y);
-	}
-
 	private double calcSectorRadius() {
-		return (Canvas.HEIGHT - Header.calcHeight() - Footer.calcHeight(FOOTER_LINE_COUNT) - SECTOR_MARGIN * 2) / 2;
+		int maxRadius = DataRegion.calcHeight() / 2;
+		double actualMaxRadius = calcSectorLabelRadius((double) maxRadius, true, true);
+		double factor = actualMaxRadius / maxRadius;
+		return maxRadius / factor - ( SECTOR_LABEL_FONT_SIZE / 2 );
 	}
 
 	private boolean isSmallSector(double start, double end) {
 		return Math.abs(start - end) < SMALL_SECTOR_THRESHOLD ? true : false;
 	}
 
-	private double calcLabelRadius(double radius, boolean isSmallSector,
+	private double calcSectorLabelRadius(double radius, boolean isSmallSector,
 			boolean isHighlighted) {
 		double labelRadius = radius;
 		if (isHighlighted) {
