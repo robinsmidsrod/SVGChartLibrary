@@ -50,7 +50,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 	private void createRangeLegend(Element svg) {
 
-		String rangeText = calcRangeLabel(chart.getRange(0));
+		String rangeText = Axis.calcLabel(chart.getRange(0));
 
 		if (rangeText.isEmpty()) {
 			return;
@@ -71,31 +71,6 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 
 		svg.appendChild(unitLegend);
 
-	}
-
-	/**
-	 * @param range
-	 *            The range you want to calculate the label for.
-	 * @return The calculated label.
-	 */
-	private String calcRangeLabel(Range range) {
-
-		// Nothing specified, return empty string
-		if (range.getName().isEmpty() && range.getUnit().isEmpty()) {
-			return "";
-		}
-
-		String rangeText = (range.getDimension() + 1) + ": ";
-
-		if (!range.getName().isEmpty()) {
-			rangeText += range.getName();
-		}
-
-		if (!range.getUnit().isEmpty()) {
-			rangeText += " (" + chart.getRange(0).getUnit() + ")";
-		}
-
-		return rangeText;
 	}
 
 	private void createTotalLegend(Element svg) {

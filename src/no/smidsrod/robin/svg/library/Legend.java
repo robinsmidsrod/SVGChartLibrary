@@ -61,6 +61,7 @@ class Legend {
 		circle.setAttribute("cy", (y - 9) + "");
 		circle.setAttribute("r", (FONT_SIZE * 0.4) + "");
 		circle.setAttribute("fill", SVGUtil.cssColor(item.getColor()));
+		circle.setAttribute("stroke", "black");
 		g.appendChild(circle);
 
 		Element text = DOMBuilder.createElement(g, "text");
