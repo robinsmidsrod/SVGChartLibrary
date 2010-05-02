@@ -23,10 +23,7 @@ public class SectorChartRenderer extends AbstractSVGRenderer {
 	private Chart chart;
 
 	public SectorChartRenderer(Chart chart) {
-		if (chart == null) {
-			throw new NullPointerException(
-					"Please specify an instance of the Chart interface");
-		}
+		super(chart);
 		if (chart.getDimensionCount() < 1) {
 			throw new IndexOutOfBoundsException(
 					"The specified chart instance doesn't support at least 1 dimension");

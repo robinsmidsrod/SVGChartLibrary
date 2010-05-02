@@ -1,5 +1,7 @@
 package no.smidsrod.robin.svg.library;
 
+import java.awt.Point;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -52,6 +54,45 @@ class SVGBuilder {
 		desc.setTextContent(chart.getDescription());
 		svg.appendChild(title);
 		svg.appendChild(desc);
+	}
+
+	static void createTextElement(Element svg, Point position, String label,
+			int fontSize, String anchor) {
+
+		int yOffset = fontSize / 2 - (fontSize / 6);
+
+		Element text = DOMBuilder.createElement(svg, "text");
+		text.setAttribute("x", position.x + "");
+		text.setAttribute("y", position.y + yOffset + "");
+		text.setAttribute("stroke", "black");
+		text.setAttribute("text-anchor", anchor);
+		text.setAttribute("font-family", "sans-serif");
+		text.setAttribute("font-size", fontSize + "");
+		text.setTextContent(label);
+		svg.appendChild(text);
+	}
+
+	static void createLineElement(Element svg, Point start, Point end,
+			String color) {
+		Element line = DOMBuilder.createElement(svg, "line");
+		line.setAttribute("x1", start.x + "");
+		line.setAttribute("y1", start.y + "");
+		line.setAttribute("x2", end.x + "");
+		line.setAttribute("y2", end.y + "");
+		line.setAttribute("stroke", color);
+		svg.appendChild(line);
+	}
+
+	static void createDottedLineElement(Element svg, Point start, Point end,
+			String color) {
+		Element line = DOMBuilder.createElement(svg, "line");
+		line.setAttribute("x1", start.x + "");
+		line.setAttribute("y1", start.y + "");
+		line.setAttribute("x2", end.x + "");
+		line.setAttribute("y2", end.y + "");
+		line.setAttribute("stroke", color);
+		line.setAttribute("stroke-dasharray", "2,2");
+		svg.appendChild(line);
 	}
 
 }

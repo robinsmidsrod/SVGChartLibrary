@@ -168,7 +168,7 @@ public class Range {
 	public void setGridlineDistance(double gridlineDistance) {
 		if (gridlineDistance > 0) {
 			this.gridlineDistance = gridlineDistance;
-			this.gridlineCount = (int) (calcRange() / gridlineDistance);
+			this.gridlineCount = (int) (calcTotalDistance() / gridlineDistance);
 		} else {
 			this.gridlineDistance = 0;
 			this.gridlineCount = 0;
@@ -185,7 +185,7 @@ public class Range {
 	public void setGridlineCount(int gridlineCount) {
 		if (gridlineCount > 0) {
 			this.gridlineCount = gridlineCount;
-			this.gridlineDistance = calcRange() / gridlineCount;
+			this.gridlineDistance = calcTotalDistance() / gridlineCount;
 		} else {
 			this.gridlineCount = 0;
 			this.gridlineDistance = 0;
@@ -204,7 +204,7 @@ public class Range {
 	 * @return The difference between the maximum and minimum value as an
 	 *         absolute value.
 	 */
-	private double calcRange() {
+	public double calcTotalDistance() {
 		double max = getMax();
 		double min = getMin();
 		return Math.abs(max - min);

@@ -8,10 +8,7 @@ public class ScatterChartRenderer extends AbstractSVGRenderer implements
 	private Chart chart;
 
 	public ScatterChartRenderer(Chart chart) {
-		if (chart == null) {
-			throw new NullPointerException(
-					"Please specify an instance of the Chart interface");
-		}
+		super(chart);
 		if (chart.getDimensionCount() < 3) {
 			throw new IndexOutOfBoundsException(
 					"The specified chart instance doesn't support at least 3 dimensions");
@@ -27,10 +24,10 @@ public class ScatterChartRenderer extends AbstractSVGRenderer implements
 		Canvas.createBorderElement(svg);
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
-		DataRegion.createBorderElement(svg, chart.getItemList());
+		//DataRegion.createBorderElement(svg, chart.getItemList());
+		Axis.createVerticalElement(svg, chart);
 
 		// createHorizontalAxis();
-		// createVerticalAxis();
 		// createCircles();
 	}
 

@@ -19,6 +19,13 @@ public abstract class AbstractSVGRenderer implements SVGRenderer {
 
 	private boolean prettyPrint = false;
 
+	public AbstractSVGRenderer(Chart chart) {
+		if (chart == null) {
+			throw new NullPointerException(
+					"Please specify an instance of the Chart interface");
+		}
+	}
+
 	@Override
 	public void renderSVGDocument(OutputStream outputStream) {
 		if (xmlDocument == null) {
