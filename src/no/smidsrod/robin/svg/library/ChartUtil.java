@@ -39,13 +39,21 @@ class ChartUtil {
 			return;
 		}
 
+		// Random random = new Random();
+
 		// Set color on the items that needs it
 		int i = 0;
 		for (Item item : items) {
 			if (item.getColor() == Item.DEFAULT_COLOR) {
+				// FIXME: Not a very good algorithm
 				float interval = 1f / numberOfItems;
 				float hue = interval * (float) i;
-				item.setColor(new Color(Color.HSBtoRGB(hue, 1f, 1f)));
+				float sat = 1f;
+				float brightness = 1f;
+				// float hue = random.nextFloat();
+				// float sat = random.nextFloat();
+				// float brightness = random.nextFloat();
+				item.setColor(new Color(Color.HSBtoRGB(hue, sat, brightness)));
 				i++;
 			}
 		}

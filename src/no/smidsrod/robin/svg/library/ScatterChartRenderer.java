@@ -1,5 +1,7 @@
 package no.smidsrod.robin.svg.library;
 
+import java.awt.Color;
+import java.awt.Point;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -37,7 +39,46 @@ public class ScatterChartRenderer extends AbstractSVGRenderer implements
 
 	private void createCircleElements(Element svg, Range xRange, Range yRange,
 			Range zRange, List<Item> items) {
-		// TODO Auto-generated method stub
+
+		SVGBuilder.createHighlightFilterElement(svg);
+		DataRegion.createClipElement(svg, items);
+
+		// Created clipped container
+		Element container = DOMBuilder.createElement(svg, "g");
+		container.setAttribute("clip-path", "url(#dataRegion)");
+		svg.appendChild(container);
+
+		double xScaleFactor = DataRegion.calcWidth(items)
+				/ xRange.calcTotalDistance();
+		double yScaleFactor = DataRegion.calcHeight()
+				/ yRange.calcTotalDistance();
+		// Max radius is one sixth of the data region's height
+		double zScaleFactor = (DataRegion.calcHeight() / 6)
+				/ zRange.calcTotalDistance();
+
+		for (Item item : items) {
+			Color color = item.getColor();
+			boolean highlighted = item.isHighlighted();
+			List<Value> values = item.getValueList();
+			createCircleElement(container, color, highlighted, values, xRange,
+					yRange, zRange, xScaleFactor, yScaleFactor, zScaleFactor);
+		}
+
+	}
+
+	private void createCircleElement(Element svg, Color color,
+			boolean isHighlighted, List<Value> values, Range xRange,
+			Range yRange, Range zRange, double xScaleFactor,
+			double yScaleFactor, double zScaleFactor) {
+
+		for (Value value : values) {
+			Point center = DataRegion.calcPoint(value, xRange, yRange,
+					xScaleFactor, yScaleFactor);
+			double radius = value.get(zRange) * zScaleFactor;
+			String filter = isHighlighted ? "url(#highlight)" : "";
+			SVGBuilder.createCircleElement(svg, center, radius, SVGUtil
+					.cssColor(color), filter);
+		}
 
 	}
 

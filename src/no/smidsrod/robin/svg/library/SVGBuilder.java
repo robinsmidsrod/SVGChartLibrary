@@ -103,18 +103,23 @@ class SVGBuilder {
 		svg.appendChild(line);
 	}
 
-	public static void createDotElement(Element svg, Point center,
+	static void createCircleElement(Element svg, Point center, double radius,
 			String color, String filter) {
 		Element circle = DOMBuilder.createElement(svg, "circle");
 		circle.setAttribute("cx", center.x + "");
 		circle.setAttribute("cy", center.y + "");
-		circle.setAttribute("r", "3");
+		circle.setAttribute("r", radius + "");
 		circle.setAttribute("fill", color);
 		if (!(filter == null || filter.isEmpty())) {
 			circle.setAttribute("filter", filter);
 		}
 		svg.appendChild(circle);
 
+	}
+
+	static void createDotElement(Element svg, Point center, String color,
+			String filter) {
+		createCircleElement(svg, center, 3, color, filter);
 	}
 
 	static void createHighlightFilterElement(Element svg) {

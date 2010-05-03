@@ -152,7 +152,7 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 
 	private int calcBarHeight(Item item, Range range, double scaleFactor) {
 		double value = item.getValueList().get(0).get(range);
-		double valueInPixels = value * scaleFactor;
+		double valueInPixels = ( value - range.getMin() ) * scaleFactor;
 		return (int) valueInPixels;
 	}
 

@@ -58,7 +58,8 @@ class DataRegion {
 	/**
 	 * Calculates the center point for the data region.
 	 * 
-	 * @param items Required to calculate the width of the data region.
+	 * @param items
+	 *            Required to calculate the width of the data region.
 	 * 
 	 * @return center-point for the data region.
 	 */
@@ -69,8 +70,10 @@ class DataRegion {
 	}
 
 	/**
-	 * @param svg The DOM element to append the border to
-	 * @param items Required to calculate the width of the box.
+	 * @param svg
+	 *            The DOM element to append the border to
+	 * @param items
+	 *            Required to calculate the width of the box.
 	 */
 	static void createBorderElement(Element svg, List<Item> items) {
 		Element box = DOMBuilder.createElement(svg, "rect");
@@ -85,20 +88,44 @@ class DataRegion {
 	}
 
 	/**
-	 * @param value The value instance to fetch data from
-	 * @param xRange The range object that identifies the X axis
-	 * @param yRange The range object that identifies the Y axis
+	 * @param value
+	 *            The value instance to fetch data from
+	 * @param xRange
+	 *            The range object that identifies the X axis
+	 * @param yRange
+	 *            The range object that identifies the Y axis
 	 * @param xScaleFactor
 	 * @param yScaleFactor
 	 * @return
 	 */
 	static Point calcPoint(Value value, Range xRange, Range yRange,
 			double xScaleFactor, double yScaleFactor) {
-		double xOffset = value.get(xRange) * xScaleFactor;
-		double yOffset = value.get(yRange) * yScaleFactor;
+		double xOffset = (value.get(xRange) - xRange.getMin()) * xScaleFactor;
+		double yOffset = (value.get(yRange) - yRange.getMin()) * yScaleFactor;
 		int x = (int) (calcLeft() + xOffset);
 		int y = (int) (calcBottom() - yOffset);
 		return new Point(x, y);
+	}
+
+	public static void createClipElement(Element svg, List<Item> items) {
+		Element defs = DOMBuilder.createElement(svg, "defs");
+		svg.appendChild(defs);
+
+		Element clip = DOMBuilder.createElement(defs, "clipPath");
+		clip.setAttribute("id", "dataRegion");
+		defs.appendChild(clip);
+
+		int x = calcLeft();
+		int y = calcTop();
+		int width = calcWidth(items);
+		int height = calcHeight();
+		Element rect = DOMBuilder.createElement(clip, "rect");
+		rect.setAttribute("x", x + "");
+		rect.setAttribute("y", y + "");
+		rect.setAttribute("width", width + "");
+		rect.setAttribute("height", height + "");
+		clip.appendChild(rect);
+
 	}
 
 }
