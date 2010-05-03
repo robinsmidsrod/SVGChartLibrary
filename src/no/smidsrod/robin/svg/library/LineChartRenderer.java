@@ -1,5 +1,9 @@
 package no.smidsrod.robin.svg.library;
 
+import java.awt.Color;
+import java.awt.Point;
+import java.util.List;
+
 import org.w3c.dom.Element;
 
 public class LineChartRenderer extends AbstractSVGRenderer implements
@@ -24,11 +28,48 @@ public class LineChartRenderer extends AbstractSVGRenderer implements
 		Canvas.createBorderElement(svg);
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
-		//DataRegion.createBorderElement(svg, chart.getItemList());
-		Axis.createVerticalElement(svg, chart.getRange(0), chart.getItemList());
-		Axis.createHorizontalElement(svg, chart.getRange(1), chart.getItemList());
+		// DataRegion.createBorderElement(svg, chart.getItemList());
+		Range xRange = chart.getRange(0); // range 0 is X axis
+		Range yRange = chart.getRange(1); // range 1 is Y axis
+		Axis.createHorizontalElement(svg, xRange, chart.getItemList());
+		Axis.createVerticalElement(svg, yRange, chart.getItemList());
+		createLineElements(svg, xRange, yRange, chart.getItemList());
+	}
 
-		// createLines();
+	private void createLineElements(Element svg, Range xRange, Range yRange,
+			List<Item> items) {
+		double xScaleFactor = DataRegion.calcWidth(items)
+				/ xRange.calcTotalDistance();
+		double yScaleFactor = DataRegion.calcHeight()
+				/ yRange.calcTotalDistance();
+		SVGBuilder.createHighlightFilterElement(svg);
+		for (Item item : items) {
+			createPolyLineElement(svg, item.getColor(), item.isHighlighted(),
+					item.getValueList(), xRange, yRange, xScaleFactor,
+					yScaleFactor);
+		}
+	}
+
+	private void createPolyLineElement(Element svg, Color color,
+			boolean isHighlighted, List<Value> values, Range xRange,
+			Range yRange, double xScaleFactor, double yScaleFactor) {
+		Point start = null;
+		for (Value value : values) {
+			Point end = DataRegion.calcPoint(value, xRange, yRange,
+					xScaleFactor, yScaleFactor);
+			if (start == null) {
+				start = new Point(end);
+			}
+			String filter = isHighlighted ? "url(#highlight)" : "";
+			SVGBuilder.createDotElement(svg, start, SVGUtil.cssColor(color),
+					filter);
+			SVGBuilder.createLineElement(svg, start, end, SVGUtil
+					.cssColor(color), filter);
+			SVGBuilder.createDotElement(svg, end, SVGUtil.cssColor(color),
+					filter);
+			start = new Point(end);
+		}
+
 	}
 
 }

@@ -84,4 +84,21 @@ class DataRegion {
 		svg.appendChild(box);
 	}
 
+	/**
+	 * @param value The value instance to fetch data from
+	 * @param xRange The range object that identifies the X axis
+	 * @param yRange The range object that identifies the Y axis
+	 * @param xScaleFactor
+	 * @param yScaleFactor
+	 * @return
+	 */
+	static Point calcPoint(Value value, Range xRange, Range yRange,
+			double xScaleFactor, double yScaleFactor) {
+		double xOffset = value.get(xRange) * xScaleFactor;
+		double yOffset = value.get(yRange) * yScaleFactor;
+		int x = (int) (calcLeft() + xOffset);
+		int y = (int) (calcBottom() - yOffset);
+		return new Point(x, y);
+	}
+
 }

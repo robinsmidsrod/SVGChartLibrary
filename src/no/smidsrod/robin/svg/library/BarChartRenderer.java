@@ -31,9 +31,10 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 		Header.createElement(svg, chart);
 		Legend.createElement(svg, chart.getItemList());
 		// DataRegion.createBorderElement(svg, chart.getItemList());
-		Axis.createVerticalElement(svg, chart.getRange(0), chart.getItemList());
-		createHorizontalLine(svg, chart.getItemList());
-		createBarElements(svg, chart.getRange(0), chart.getItemList());
+		Range yRange = chart.getRange(0); // range 0 is Y axis
+		Axis.createVerticalElement(svg, yRange, chart.getItemList());
+		createHorizontalLine(svg, chart.getItemList()); // No X axis grid
+		createBarElements(svg, yRange, chart.getItemList());
 	}
 
 	private void createHorizontalLine(Element svg, List<Item> items) {
@@ -51,7 +52,8 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 		}
 
 		// Pattern used for highlighting
-		createDiagonalPatternElement(svg);
+		SVGBuilder.createHighlightFilterElement(svg);
+		createHighlightPatternElement(svg);
 
 		double widthPerItem = DataRegion.calcWidth(items) / (items.size() + 1);
 		double scaleFactor = DataRegion.calcHeight()
@@ -79,6 +81,9 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 		bar.setAttribute("height", height + "");
 		bar.setAttribute("stroke", "black");
 		bar.setAttribute("fill", SVGUtil.cssColor(item.getColor()));
+		if ( item.isHighlighted() ) {
+			bar.setAttribute("filter", "url(#highlight)");
+		}
 		svg.appendChild(bar);
 
 		if (item.isHighlighted()) {
@@ -88,7 +93,7 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 			highlight.setAttribute("width", width + "");
 			highlight.setAttribute("height", height + "");
 			highlight.setAttribute("stroke", "black");
-			highlight.setAttribute("fill", "url(#diagonalPattern)");
+			highlight.setAttribute("fill", "url(#highlightPattern)");
 			svg.appendChild(highlight);
 		}
 
@@ -111,12 +116,12 @@ public class BarChartRenderer extends AbstractSVGRenderer implements
 		svg.appendChild(label);
 	}
 
-	private void createDiagonalPatternElement(Element svg) {
+	private void createHighlightPatternElement(Element svg) {
 		Element defs = DOMBuilder.createElement(svg, "defs");
 		svg.appendChild(defs);
 
 		Element pattern = DOMBuilder.createElement(defs, "pattern");
-		pattern.setAttribute("id", "diagonalPattern");
+		pattern.setAttribute("id", "highlightPattern");
 		pattern.setAttribute("patternUnits", "userSpaceOnUse");
 		pattern.setAttribute("viewBox", "0 0 10 10");
 		pattern.setAttribute("x", "0");

@@ -74,12 +74,20 @@ class SVGBuilder {
 
 	static void createLineElement(Element svg, Point start, Point end,
 			String color) {
+		createLineElement(svg, start, end, color, "");
+	}
+
+	static void createLineElement(Element svg, Point start, Point end,
+			String color, String filter) {
 		Element line = DOMBuilder.createElement(svg, "line");
 		line.setAttribute("x1", start.x + "");
 		line.setAttribute("y1", start.y + "");
 		line.setAttribute("x2", end.x + "");
 		line.setAttribute("y2", end.y + "");
 		line.setAttribute("stroke", color);
+		if (!(filter == null || filter.isEmpty())) {
+			line.setAttribute("filter", filter);
+		}
 		svg.appendChild(line);
 	}
 
@@ -93,6 +101,62 @@ class SVGBuilder {
 		line.setAttribute("stroke", color);
 		line.setAttribute("stroke-dasharray", "2,2");
 		svg.appendChild(line);
+	}
+
+	public static void createDotElement(Element svg, Point center,
+			String color, String filter) {
+		Element circle = DOMBuilder.createElement(svg, "circle");
+		circle.setAttribute("cx", center.x + "");
+		circle.setAttribute("cy", center.y + "");
+		circle.setAttribute("r", "3");
+		circle.setAttribute("fill", color);
+		if (!(filter == null || filter.isEmpty())) {
+			circle.setAttribute("filter", filter);
+		}
+		svg.appendChild(circle);
+
+	}
+
+	static void createHighlightFilterElement(Element svg) {
+		Element defs = DOMBuilder.createElement(svg, "defs");
+		svg.appendChild(defs);
+
+		// Glow shadow taken from
+		// http://commons.oreilly.com/wiki/index.php/SVG_Essentials/Filters#Creating_a_Glowing_Shadow
+		// but modified further.
+
+		Element filter = DOMBuilder.createElement(defs, "filter");
+		filter.setAttribute("id", "highlight");
+		defs.appendChild(filter);
+
+		// Increase the radius of our graphic by 2 pixels
+		Element morph = DOMBuilder.createElement(filter, "feMorphology");
+		morph.setAttribute("operator", "dilate");
+		morph.setAttribute("radius", "2");
+		filter.appendChild(morph);
+
+		// Make the original color stronger
+		Element colorMatrix = DOMBuilder.createElement(filter, "feColorMatrix");
+		colorMatrix.setAttribute("type", "saturate");
+		colorMatrix.setAttribute("values", "1");
+		filter.appendChild(colorMatrix);
+
+		Element blur = DOMBuilder.createElement(filter, "feGaussianBlur");
+		blur.setAttribute("stdDeviation", "2.5");
+		blur.setAttribute("result", "coloredBlur");
+		filter.appendChild(blur);
+
+		Element merge = DOMBuilder.createElement(filter, "feMerge");
+		filter.appendChild(merge);
+
+		Element mergeNode1 = DOMBuilder.createElement(merge, "feMergeNode");
+		mergeNode1.setAttribute("in", "coloredBlur");
+		merge.appendChild(mergeNode1);
+
+		Element mergeNode2 = DOMBuilder.createElement(merge, "feMergeNode");
+		mergeNode2.setAttribute("in", "SourceGraphic");
+		merge.appendChild(mergeNode2);
+
 	}
 
 }
