@@ -1,13 +1,12 @@
 package no.smidsrod.robin.svg.library;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 import org.w3c.dom.Document;
-
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 /**
  * @author Robin Smidsrød <robin@smidsrod.no>
@@ -45,7 +44,7 @@ public abstract class AbstractSVGRenderer implements SVGRenderer {
 
 	@Override
 	public String getSVGDocument() {
-		ByteOutputStream out = new ByteOutputStream();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		renderSVGDocument(out);
 		return out.toString();
 	}
