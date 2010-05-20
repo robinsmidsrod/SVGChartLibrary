@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 
 /**
+ * An interface for common functionality required by SVG renderer classes.
+ * 
  * @author Robin Smidsrød <robin@smidsrod.no>
  * 
  */

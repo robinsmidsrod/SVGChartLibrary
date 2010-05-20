@@ -3,6 +3,8 @@ package no.smidsrod.robin.svg.library;
 import java.util.List;
 
 /**
+ * An interface for common functionality required by chart classes.
+ * 
  * @author Robin Smidsrød <robin@smidsrod.no>
  * 
  */

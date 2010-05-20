@@ -2,6 +2,15 @@ package no.smidsrod.robin.svg.library;
 
 import java.util.List;
 
+/**
+ * Implementation of a scatter chart.
+ * <p>
+ * Supports three dimensions and multiple values per item in the current
+ * implementation. The third dimension is the radius of each circle.
+ * 
+ * @author Robin Smidsrød <robin@smidsrod.no>
+ * 
+ */
 public class ScatterChart extends AbstractChart {
 
 	public ScatterChart() {

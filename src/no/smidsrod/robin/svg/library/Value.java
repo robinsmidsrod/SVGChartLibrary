@@ -1,5 +1,15 @@
 package no.smidsrod.robin.svg.library;
 
+/**
+ * A value represents information about a specific item in all the dimensions
+ * available.
+ * <p>
+ * If the chart has three dimensions, a value must hold one double value for
+ * each of the three dimensions.
+ * 
+ * @author Robin Smidsrød <robin@smidsrod.no>
+ * 
+ */
 public class Value {
 
 	private double[] values;
@@ -15,7 +25,7 @@ public class Value {
 
 	/**
 	 * Technically not needed, but provided for convenience.
-	 *
+	 * 
 	 * @param chart
 	 *            Specify the chart this Value is supposed to be attached to,
 	 *            and it will initialize how many dimensions it can support from
@@ -50,7 +60,7 @@ public class Value {
 
 	/**
 	 * Technically not required, but provided for convenience.
-	 *
+	 * 
 	 * @param range
 	 *            Will fetch the dimension from the Range object specified.
 	 * @return The value stored for the dimension of the Range object.
@@ -61,7 +71,7 @@ public class Value {
 
 	/**
 	 * Technically not required, but provided for convenience.
-	 *
+	 * 
 	 * @param range
 	 *            Will fetch the dimension from the Range object specified.
 	 * @param value

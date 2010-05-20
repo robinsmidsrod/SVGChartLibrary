@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Abstract base class which implements common behaviour for charts.
+ * 
  * @author Robin Smidsrød <robin@smidsrod.no>
- *
+ * 
  */
 public abstract class AbstractChart implements Chart {
 
@@ -38,7 +40,7 @@ public abstract class AbstractChart implements Chart {
 
 	/**
 	 * Convenience constructure stub for sub-classes.
-	 *
+	 * 
 	 * @param title
 	 *            The title of the chart
 	 * @param description
@@ -52,7 +54,7 @@ public abstract class AbstractChart implements Chart {
 
 	/**
 	 * Constructor that enables setting the item list from a sub-class.
-	 *
+	 * 
 	 * @param title
 	 *            The title of the chart
 	 * @param description

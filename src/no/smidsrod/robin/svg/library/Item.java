@@ -5,13 +5,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Each item represents a colored element in the chart.
+ * <p>
+ * Charts contain usually several items. Each item represents e.g. a car brand,
+ * a person, an employee or some other noun you're trying to show some
+ * statistics for. Each item gets a separate color in the chart (either
+ * specified or calculated).
+ * 
  * @author Robin Smidsrød <robin@smidsrod.no>
- *
+ * 
  */
 public class Item {
 
 	public static final Color DEFAULT_COLOR = new Color(0, true); // Completely
-																	// transparent
+	// transparent
 
 	private String name = "";
 

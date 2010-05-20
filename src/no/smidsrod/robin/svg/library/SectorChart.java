@@ -2,6 +2,15 @@ package no.smidsrod.robin.svg.library;
 
 import java.util.List;
 
+/**
+ * Implementation of a typical sector/pie chart.
+ * <p>
+ * Only supports one dimension and one value per item in the current
+ * implementation.
+ * 
+ * @author Robin Smidsrød <robin@smidsrod.no>
+ * 
+ */
 public class SectorChart extends AbstractChart {
 
 	public SectorChart() {

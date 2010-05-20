@@ -9,6 +9,8 @@ import java.io.OutputStream;
 import org.w3c.dom.Document;
 
 /**
+ * Abstract base class which implements common behaviour for SVG renderers.
+ * 
  * @author Robin Smidsrød <robin@smidsrod.no>
  * 
  */

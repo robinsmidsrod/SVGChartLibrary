@@ -3,6 +3,12 @@ package no.smidsrod.robin.svg.library;
 import java.util.List;
 
 /**
+ * A range represents a dimension in the chart.
+ * <p>
+ * Ranges holds information about a given dimension, such as the maximum and
+ * minimum values plotted in the chart. In addition it includes the unit (e.g.
+ * km/h, dollars) and the name (salary, speed).
+ * 
  * @author Robin Smidsrød <robin@smidsrod.no>
  * 
  */
