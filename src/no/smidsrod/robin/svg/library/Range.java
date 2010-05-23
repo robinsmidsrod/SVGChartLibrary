@@ -216,4 +216,19 @@ public class Range {
 		return Math.abs(max - min);
 	}
 
+	/**
+	 * @return true if min value has been previously set
+	 */
+	public boolean isMinSet() {
+		return !calculateMin;
+	}
+
+	/**
+	 * @return true if max value has been previously set
+	 */
+	public boolean isMaxSet() {
+		return !calculateMax;
+	}
+
+
 }
