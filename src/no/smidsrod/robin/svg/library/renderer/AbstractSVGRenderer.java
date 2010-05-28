@@ -1,10 +1,12 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+
+import no.smidsrod.robin.svg.library.Chart;
 
 import org.w3c.dom.Document;
 

@@ -2,6 +2,9 @@ package no.smidsrod.robin.svg.library;
 
 import java.util.List;
 
+import no.smidsrod.robin.svg.library.renderer.BarChartRenderer;
+import no.smidsrod.robin.svg.library.renderer.SVGRenderer;
+
 /**
  * Implementation of a typical bar chart.
  * <p>

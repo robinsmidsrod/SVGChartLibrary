@@ -1,8 +1,13 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
+
+import no.smidsrod.robin.svg.library.Chart;
+import no.smidsrod.robin.svg.library.Item;
+import no.smidsrod.robin.svg.library.Range;
+import no.smidsrod.robin.svg.library.Value;
 
 import org.w3c.dom.Element;
 

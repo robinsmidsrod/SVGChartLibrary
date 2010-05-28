@@ -2,6 +2,9 @@ package no.smidsrod.robin.svg.library;
 
 import java.util.List;
 
+import no.smidsrod.robin.svg.library.renderer.SVGRenderer;
+import no.smidsrod.robin.svg.library.renderer.ScatterChartRenderer;
+
 /**
  * Implementation of a scatter chart.
  * <p>

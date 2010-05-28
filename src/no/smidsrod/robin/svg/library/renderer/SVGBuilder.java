@@ -1,6 +1,8 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.awt.Point;
+
+import no.smidsrod.robin.svg.library.Chart;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

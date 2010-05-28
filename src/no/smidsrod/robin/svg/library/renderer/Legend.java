@@ -1,6 +1,8 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.util.List;
+
+import no.smidsrod.robin.svg.library.Item;
 
 import org.w3c.dom.Element;
 

@@ -1,9 +1,12 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.awt.Point;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+
+import no.smidsrod.robin.svg.library.Chart;
+import no.smidsrod.robin.svg.library.Item;
 
 import org.w3c.dom.Element;
 

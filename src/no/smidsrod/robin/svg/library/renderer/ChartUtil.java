@@ -1,7 +1,10 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.awt.Color;
 import java.util.List;
+
+import no.smidsrod.robin.svg.library.Chart;
+import no.smidsrod.robin.svg.library.Item;
 
 class ChartUtil {
 

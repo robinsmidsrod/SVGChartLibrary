@@ -3,6 +3,8 @@ package no.smidsrod.robin.svg.library;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.smidsrod.robin.svg.library.renderer.SVGRenderer;
+
 /**
  * Abstract base class which implements common behaviour for charts.
  * 

@@ -1,4 +1,4 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,4 +1,6 @@
-package no.smidsrod.robin.svg.library;
+package no.smidsrod.robin.svg.library.renderer;
+
+import no.smidsrod.robin.svg.library.Chart;
 
 import org.w3c.dom.Element;
 
